@@ -2,15 +2,22 @@
 
 import { useState, useEffect } from "react";
 import Navbarsub from "../navbarsub/page";
-import Map from "../map";
+import dynamic from 'next/dynamic';
+
+// Carrega o componente Map apenas no lado do cliente
+const Map = dynamic(() => import('../map'), {
+  ssr: false,
+});
 
 export default function CreateEvent() {
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    setUserId(localStorage.getItem("id"));
-    setToken(localStorage.getItem("token"));
+    if (typeof window !== 'undefined') {
+      setUserId(localStorage.getItem("id"));
+      setToken(localStorage.getItem("token"));
+    }
   }, []);
 
   const [formData, setFormData] = useState({
@@ -82,27 +89,28 @@ export default function CreateEvent() {
       alert("Erro na requisição: " + error);
     }
   };
-  function setDefaultLocation(event: React.MouseEvent<HTMLButtonElement>): void {
-    throw new Error("Function not implemented.");
-  }
+
+  const setDefaultLocation = () => {
+    setFormData((prev) => ({ ...prev, location: "São Paulo, SP" }));
+  };
 
   return (
     <div className="h-screen bg-slate-100 flex flex-col items-center">
-    <Navbarsub />
-    <div className="w-full max-w-2xl bg-white p-6 mt-20 shadow-lg rounded-xl">
-      <h2 className="text-3xl font-semibold text-center mb-6">Criar Evento</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Título</label>
-          <input
-            type="text"
-            name="name"
-            className="w-full px-4 py-2 border rounded-md"
-            required
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </div>
+      <Navbarsub />
+      <div className="w-full max-w-2xl bg-white p-6 mt-20 shadow-lg rounded-xl">
+        <h2 className="text-3xl font-semibold text-center mb-6">Criar Evento</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Título</label>
+            <input
+              type="text"
+              name="name"
+              className="w-full px-4 py-2 border rounded-md"
+              required
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">Descrição</label>
@@ -149,9 +157,14 @@ export default function CreateEvent() {
               value={formData.location}
               onChange={handleChange}
             />
-            <button type="button" onClick={setDefaultLocation} className="mt-2 text-blue-500">Usar Local Padrão</button>
+            <button
+              type="button"
+              onClick={setDefaultLocation}
+              className="mt-2 text-blue-500 hover:text-blue-700"
+            >
+              Usar Local Padrão
+            </button>
           </div>
-        
 
           <div>
             <Map address={formData.location} />
@@ -167,19 +180,34 @@ export default function CreateEvent() {
                 value={newParticipant}
                 onChange={(e) => setNewParticipant(e.target.value)}
               />
-              <button type="button" onClick={handleAddParticipant} className="bg-green-500 text-white px-4 rounded-md">+</button>
+              <button
+                type="button"
+                onClick={handleAddParticipant}
+                className="bg-green-500 text-white px-4 rounded-md hover:bg-green-600"
+              >
+                +
+              </button>
             </div>
             <ul className="mt-2 space-y-1">
               {participants.map((participant, index) => (
                 <li key={index} className="flex justify-between items-center bg-gray-100 px-2 py-1 rounded-md">
                   {participant}
-                  <button type="button" onClick={() => handleRemoveParticipant(index)} className="text-red-500">❌</button>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveParticipant(index)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ❌
+                  </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          <button type="submit" className="w-full bg-gradient-to-r from-customRed to-customOrange text-white p-2 rounded-lg shadow-md hover:from-customPurple hover:to-customRed">
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-customRed to-customOrange text-white p-2 rounded-lg shadow-md hover:from-customPurple hover:to-customRed"
+          >
             Criar Evento
           </button>
         </form>

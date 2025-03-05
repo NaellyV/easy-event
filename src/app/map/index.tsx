@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -9,7 +9,7 @@ interface MapProps {
 }
 
 export default function Map({ address }: MapProps) {
-  const [coords, setCoords] = useState<[number, number]>([-23.55052, -46.633308])
+  const [coords, setCoords] = useState<[number, number]>([-23.55052, -46.633308]);
 
   function ChangeView({ center }: { center: [number, number] }) {
     const map = useMap();
@@ -32,7 +32,7 @@ export default function Map({ address }: MapProps) {
 
   return (
     <div className="w-full h-[400px] rounded-lg overflow-hidden border border-gray-300 shadow-md">
-      <MapContainer className="h-full w-full" >
+      <MapContainer className="h-full w-full">
         <ChangeView center={coords} />
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <Marker position={coords} />

@@ -1,10 +1,12 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack(config: { module: { rules: { test: RegExp; use: string[]; }[]; }; }) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
 };
 
-const withImages = require("next-images");
-module.exports = withImages();
-
-export default nextConfig;
+module.exports = nextConfig;

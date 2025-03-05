@@ -1,9 +1,8 @@
 import Inicio from "@/image/page";
 import Navbar from "./navbar/page";
-import { title } from "process";
 
 export const metadata = {
-  title: "Gerenciador de eventos",
+  title: "Gerenciador de Eventos",
 };
 
 export default function Home() {
@@ -22,9 +21,9 @@ export default function Home() {
           </div>
           <div className="p-4 m-2 rounded-xl shadow-lg bg-white w-full text-center">
             <p className="text-lg text-gray-600">
-              Um organizador de eventos transforma ideias em memórias
-              inesquecíveis, garantindo que cada detalhe seja perfeito, para que
-              você aproveite o momento sem preocupações.
+              Um organizador de eventos transforma ideias em memórias inesquecíveis, 
+              garantindo que cada detalhe seja perfeito, para que você aproveite o momento 
+              sem preocupações.
             </p>
           </div>
         </div>

@@ -1,21 +1,31 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Navbarsub from "../navbarsub/page";
-import { useState } from "react";
 import Map from "../map";
 
-
 export default function CreateEvent() {
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  const userId = localStorage.getItem("id");
+  useEffect(() => {
+    setUserId(localStorage.getItem("id"));
+    setToken(localStorage.getItem("token"));
+  }, []);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     date: "",
     time: "",
     location: "",
-    userId,
+    userId: "",
   });
+
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, userId: userId || "" }));
+  }, [userId]);
+
   const [participants, setParticipants] = useState<string[]>([]);
   const [newParticipant, setNewParticipant] = useState("");
 
@@ -36,10 +46,14 @@ export default function CreateEvent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!token) {
+      alert("Erro: Usuário não autenticado.");
+      return;
+    }
+
     const requestData = { ...formData, userId, participants };
 
     try {
-      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:3333/event", {
         method: "POST",
         headers: {
@@ -57,7 +71,7 @@ export default function CreateEvent() {
           date: "",
           time: "",
           location: "",
-          userId,
+          userId: "",
         });
         setParticipants([]);
       } else {
@@ -68,31 +82,27 @@ export default function CreateEvent() {
       alert("Erro na requisição: " + error);
     }
   };
-
-  const setDefaultLocation = () => {
-    setFormData({
-      ...formData,
-      location: "IFMA - Instituto Federal do Maranhão - Timon,MA",
-    });
-  };
+  function setDefaultLocation(event: React.MouseEvent<HTMLButtonElement>): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <div className="h-screen bg-slate-100 flex flex-col items-center">
-      <Navbarsub />
-      <div className="w-full max-w-2xl bg-white p-6 mt-20 shadow-lg rounded-xl">
-        <h2 className="text-3xl font-semibold text-center mb-6">Criar Evento</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Título</label>
-            <input
-              type="text"
-              name="name"
-              className="w-full px-4 py-2 border rounded-md"
-              required
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </div>
+    <Navbarsub />
+    <div className="w-full max-w-2xl bg-white p-6 mt-20 shadow-lg rounded-xl">
+      <h2 className="text-3xl font-semibold text-center mb-6">Criar Evento</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Título</label>
+          <input
+            type="text"
+            name="name"
+            className="w-full px-4 py-2 border rounded-md"
+            required
+            value={formData.name}
+            onChange={handleChange}
+          />
+        </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700">Descrição</label>
